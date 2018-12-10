@@ -93,12 +93,38 @@ public class SnowFlake {
         return System.currentTimeMillis();
     }
 
-    public static void main(String[] args) {
+    private static void useTimeTest() {
         SnowFlake snowFlake = new SnowFlake(2, 3);
-
-        for (int i = 0; i < (1 << 12); i++) {
-            System.out.println(snowFlake.nextId());
+        int times = 4000000;
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < times; i++) {
+            snowFlake.nextId();
         }
+        long end = System.currentTimeMillis();
+        System.out.println("times " + times + " milliseconds " + (end - start));
+    }
 
+    public static void baseTest() {
+        SnowFlake snowFlake = new SnowFlake(2, 3);
+        System.out.println("Curr Time 0x" + Long.toHexString((snowFlake.getNewstmp() - START_STMP)));
+        System.out.println("Datacenter Id 0x" + Long.toHexString(snowFlake.datacenterId));
+        System.out.println("Machine Id 0x" + Long.toHexString(snowFlake.machineId));
+        System.out.println("Sequence 0x" + Long.toHexString(snowFlake.sequence & MAX_SEQUENCE));
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                long newid = snowFlake.nextId();
+                System.out.println("0x" + Long.toHexString(newid) + " " + newid);
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        baseTest();
+        useTimeTest();
     }
 }
