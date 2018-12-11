@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SnowFlakeTest {
-    long times = 2 ^ 20;
+    long times = 1000000;
 
     @Test
     public void contextLoads() {
@@ -78,6 +78,38 @@ public class SnowFlakeTest {
                     return this;
                 }
             }.accept(i);
+            new Thread(runnable).start();
+        }
+        try {
+            latch.await(); // 主线程等待
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Set<Long> set = new TreeSet<>();
+        for(Long item: queue) {
+            set.add(item);
+        }
+        assertThat((long)queue.size(), equalTo(threads * times));
+        assertThat((long)set.size(), equalTo(threads * times));
+    }
+
+    // 多个线程并发，只有一个ID生成器，每秒钟生产id总共不超过getMaxSequence个，生成的id就不会重复
+    @Test
+    public void testSameWorkidConcurrent() {
+        int threads = 4;
+        CountDownLatch latch = new CountDownLatch(threads);
+        Queue<Long> queue = new ConcurrentLinkedQueue<>();
+        SnowFlake snowFlake = new SnowFlake(3, 2);
+        for (int i = 0; i < threads; i++) {
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    for (long i = 0; i < times; i++) {
+                        queue.add(snowFlake.nextId());
+                    }
+                    latch.countDown(); // 执行完毕，计数器减1
+                }
+            };
             new Thread(runnable).start();
         }
         try {

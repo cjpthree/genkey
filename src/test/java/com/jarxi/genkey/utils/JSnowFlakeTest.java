@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class JSnowFlakeTest {
-    private long times = 2 ^ 20;
+    private long times = 1000000;
 
     @Test
     public void contextLoads() {
@@ -87,6 +87,39 @@ public class JSnowFlakeTest {
         for(Long item: queue) {
             set.add(item);
         }
+        System.out.println(queue.size());
+        assertThat((long)queue.size(), equalTo(threads * times));
+        assertThat((long)set.size(), equalTo(threads * times));
+    }
+
+    // 多个线程并发，只有一个ID生成器，每秒钟生产id总共不超过getMaxSequence个，生成的id就不会重复
+    @Test
+    public void testSameWorkidConcurrent() {
+        int threads = 4;
+        CountDownLatch latch = new CountDownLatch(threads);
+        Queue<Long> queue = new ConcurrentLinkedQueue<>();
+        JSnowFlake jsnowFlake = new JSnowFlake();
+        for (int i = 0; i < threads; i++) {
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    for (long i = 0; i < times; i++) {
+                        queue.add(jsnowFlake.nextId());
+                    }
+                    latch.countDown(); // 执行完毕，计数器减1
+                }
+            };
+            new Thread(runnable).start();
+        }
+        try {
+            latch.await(); // 主线程等待
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Set<Long> set = new TreeSet<>();
+        for(Long item: queue) {
+            set.add(item);
+        }
         assertThat((long)queue.size(), equalTo(threads * times));
         assertThat((long)set.size(), equalTo(threads * times));
     }
@@ -95,7 +128,7 @@ public class JSnowFlakeTest {
     // 手动用shell命令'date -s xx:xx:xx'调整时钟也能测试
     @Test
     public void testClockRepetition() {
-        long itimes = 30;
+        long itimes = 10;
         long jtimes = times;
         long newMillis = System.currentTimeMillis();
         long oldMillis = newMillis;
