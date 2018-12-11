@@ -93,28 +93,4 @@ public class SnowFlakeTest {
         assertThat((long)queue.size(), equalTo(threads * times));
         assertThat((long)set.size(), equalTo(threads * times));
     }
-
-    // 测试时钟调整的影响，设置时钟不能影响currentTimeMillis(),此测试暂时无用
-    @Test
-    public void testClockRepetition() {
-        long itimes = 100;
-        long jtimes = times;
-        SnowFlake snowFlake = new SnowFlake(3, 2);
-        Set<Long> set = new TreeSet<>();
-        for (long i = 0; i < itimes; i++) {
-            for (long j = 0; j < jtimes; j++) {
-                set.add(snowFlake.nextId());
-            }
-            Date date = new Date();
-            long time = date.getTime();
-            time = time - 1 * 1000; // 返回1毫秒之前
-            date.setTime(time);
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        assertThat((long)set.size(), equalTo(itimes * jtimes));
-    }
 }

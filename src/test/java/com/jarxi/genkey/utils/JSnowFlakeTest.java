@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
@@ -92,10 +91,11 @@ public class JSnowFlakeTest {
         assertThat((long)set.size(), equalTo(threads * times));
     }
 
-    // 测试时钟调整的影响，设置时钟不能影响currentTimeMillis(),此测试暂时无用
+    // 测试时钟调整的影响，java中设置时钟不能影响currentTimeMillis()
+    // 手动用shell命令'date -s xx:xx:xx'调整时钟也能测试
     @Test
     public void testClockRepetition() {
-        long itimes = 10;
+        long itimes = 30;
         long jtimes = times;
         long newMillis = System.currentTimeMillis();
         long oldMillis = newMillis;
@@ -105,15 +105,12 @@ public class JSnowFlakeTest {
             for (long j = 0; j < jtimes; j++) {
                 set.add(jsnowFlake.nextId());
             }
-            Date date = new Date();
             newMillis = System.currentTimeMillis();
             if (oldMillis > newMillis) {
-                System.out.println("wrong time");
+                System.out.println("Clock moved backwards");
             }
             oldMillis = newMillis;
-            long time = date.getTime();
-            time = time - 1 * 1000; // 返回1秒之前
-            date.setTime(time);
+            // 调整时钟
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
