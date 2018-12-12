@@ -58,8 +58,8 @@ public class JSnowFlakeTest {
     @Test
     public void testConcurrent() {
         int threads = 10;
-        CountDownLatch latch = new CountDownLatch(threads);
-        Queue<Long> queue = new ConcurrentLinkedQueue<>();
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final Queue<Long> queue = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < threads; i++) {
             Runnable runnable = new Runnable() {
                 int workid = 0;
@@ -87,7 +87,6 @@ public class JSnowFlakeTest {
         for(Long item: queue) {
             set.add(item);
         }
-        System.out.println(queue.size());
         assertThat((long)queue.size(), equalTo(threads * times));
         assertThat((long)set.size(), equalTo(threads * times));
     }
@@ -96,9 +95,9 @@ public class JSnowFlakeTest {
     @Test
     public void testSameWorkidConcurrent() {
         int threads = 4;
-        CountDownLatch latch = new CountDownLatch(threads);
-        Queue<Long> queue = new ConcurrentLinkedQueue<>();
-        JSnowFlake jsnowFlake = new JSnowFlake();
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final Queue<Long> queue = new ConcurrentLinkedQueue<>();
+        final JSnowFlake jsnowFlake = new JSnowFlake();
         for (int i = 0; i < threads; i++) {
             Runnable runnable = new Runnable() {
                 public void run() {

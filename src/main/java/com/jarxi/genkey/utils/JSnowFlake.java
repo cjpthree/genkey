@@ -60,7 +60,7 @@ public class JSnowFlake {
     /**
      * 产生下一个ID
      *
-     * @return
+     * @return a type long ID
      */
     public synchronized long nextId() {
         long currStmp = getNewstmp();
@@ -72,22 +72,6 @@ public class JSnowFlake {
         return (currStmp - START_STMP) << TIMESTMP_LEFT //时间戳部分
                 | sequence << SEQUENCE_LEFT             //序列号部分
                 | machineId;                            //机器标识部分
-    }
-
-    /**
-     * 获取最大的序列号
-     * @return
-     */
-    public long getMaxSequence() {
-        return MAX_SEQUENCE;
-    }
-
-    /**
-     * 获取最大的机器标识
-     * @return
-     */
-    public long getMaxMachineNum() {
-        return MAX_MACHINE_NUM;
     }
 
     private long getNewstmp() {
@@ -138,7 +122,7 @@ public class JSnowFlake {
         System.out.println("times " + times + " milliseconds " + (end - start));
     }
 
-    public static void baseTest() {
+    private static void baseTest() {
         JSnowFlake jsnowFlake = new JSnowFlake();
         System.out.println("Curr Time 0x" + Long.toHexString((jsnowFlake.getNewstmp() - START_STMP)));
         System.out.println("Sequence 0x" + Long.toHexString(jsnowFlake.sequence & MAX_SEQUENCE));

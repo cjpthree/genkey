@@ -5,14 +5,11 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -61,8 +58,8 @@ public class SnowFlakeTest {
     @Test
     public void testConcurrent() {
         int threads = 10;
-        CountDownLatch latch = new CountDownLatch(threads);
-        Queue<Long> queue = new ConcurrentLinkedQueue<>();
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final Queue<Long> queue = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < threads; i++) {
             Runnable runnable = new Runnable() {
                 int workid = 0;
@@ -98,9 +95,9 @@ public class SnowFlakeTest {
     @Test
     public void testSameWorkidConcurrent() {
         int threads = 4;
-        CountDownLatch latch = new CountDownLatch(threads);
-        Queue<Long> queue = new ConcurrentLinkedQueue<>();
-        SnowFlake snowFlake = new SnowFlake(3, 2);
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final Queue<Long> queue = new ConcurrentLinkedQueue<>();
+        final SnowFlake snowFlake = new SnowFlake(3, 2);
         for (int i = 0; i < threads; i++) {
             Runnable runnable = new Runnable() {
                 public void run() {

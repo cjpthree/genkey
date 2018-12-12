@@ -53,7 +53,7 @@ public class SnowFlake {
     /**
      * 产生下一个ID
      *
-     * @return
+     * @return a type long ID
      */
     public synchronized long nextId() {
         long currStmp = getNewstmp();
@@ -104,7 +104,7 @@ public class SnowFlake {
         System.out.println("times " + times + " milliseconds " + (end - start));
     }
 
-    public static void baseTest() {
+    private static void baseTest() {
         SnowFlake snowFlake = new SnowFlake(2, 3);
         System.out.println("Curr Time 0x" + Long.toHexString((snowFlake.getNewstmp() - START_STMP)));
         System.out.println("Datacenter Id 0x" + Long.toHexString(snowFlake.datacenterId));
