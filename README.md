@@ -7,15 +7,10 @@ ref: https://blog.csdn.net/u013970991/article/details/69388427
 * 10位机器标识，可以通过构造函数传入，没有传入就根据mac地址生成
 
 使用方法：
-cd genkey
-打包
-mvn clean package
-安装到本地maven仓库
-mvn install:install-file -Dfile=target/genkey-0.0.1-SNAPSHOT.jar.original
 在项目pom.xml中添加依赖
 <dependency>
     <groupId>com.jarxi</groupId>
     <artifactId>genkey</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
