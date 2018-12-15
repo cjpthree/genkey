@@ -83,6 +83,7 @@ public class JSnowFlake {
                 | sequence << SEQUENCE_LEFT             //序列号部分
                 | machineId;                            //机器标识部分
     }
+
     private long getNextSecond() {
         long second = getNewstmp();
         while (second <= lastStmp) {

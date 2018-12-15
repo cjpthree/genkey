@@ -23,7 +23,7 @@ public class JSnowFlakeTest {
     public void contextLoads() {
     }
 
-    // 连续生产不超过getMaxSequence个id，不会重复
+    // 连续生产超过MAX_SEQUENCE个id，不会重复
     @Test
     public void testRepetitionLess() {
         JSnowFlake jsnowFlake = new JSnowFlake();
